@@ -5,6 +5,7 @@ import React, {
   Select,
   Input,
   Button,
+  ChakraProvider,
 } from "@chakra-ui/react";
 import Flashcard from "./Componets/FlashCard";
 import "./App.css";
@@ -18,7 +19,7 @@ interface Category {
   name: string;
 }
 
-interface Flashcard {
+export interface Flashcard {
   id: string;
   question: string;
   answer: string;
@@ -32,15 +33,20 @@ function App() {
   const [categories, setCategories] = useState<Category[]>([]);
 
   //Ref declarations to access the <select> and <input> elements in the form
-  const categoryEl = useRef<HTMLSelectElement>(null);
-  const amountEl = useRef<HTMLInputElement>(null);
+  const categoryEl = useRef<HTMLSelectElement | null>(null);
+  const amountEl = useRef<HTMLInputElement | null>(null);
 
   //Using useEffect hook to fetch categories from the Open Trivia Database API when the component mounts
   useEffect(() => {
     axios
-      .get("https://opentdb.com/api.php?amount=10&type=multiple&encode=url3986")
+      .get("https://opentdb.com/api_category.php")
       .then((res) => {
+        console.log("API response for categories:", res.data)
         setCategories(res.data.trivia_categories);
+
+      })
+      .catch((error)=> {
+        console.error("error fetching categories:", error);
       });
   }, []);
   //Defining a string function to decode HTML entities in strings
@@ -54,7 +60,7 @@ function App() {
     e.preventDefault();
     if (amountEl.current && categoryEl.current) {
       const apiURL =
-        "https://opentdb.com/api.php?amount=10&type=multiple&encode=url3986";
+        "https://opentdb.com/api.php?amount=10&type=multiple";
       console.log("Fetching data from", apiURL);
       axios
         .get(apiURL, {
@@ -97,24 +103,31 @@ function App() {
   //Returning JSX that includes a form with Chakra UI components for category selection and question amount input
   //And Displaying the list of flashcards using the CardList component
   return (
-    <Box>
+    <ChakraProvider>
+ <Box>
       {/* A standard HTML form element with the onSubmit event handler set to the handleSubmit function. */}
       <form className="header" onSubmit={handleSubmit}>
         {/* Below components are used to create the category selection dropdown */}
-        <FormControl>
-          <FormLabel htmlFor="category">Category</FormLabel>
+        <FormControl className="form-group" >
+          
+            <FormLabel htmlFor="category">Category</FormLabel>
           <Select id="category" ref={categoryEl}>
             {/* This maps over the categories array and generates an <option> element for each category. */}
-            {/* {categories.map((category) => (
-              <option value={category.id} key={category.id}>
+            {categories.map(category => {
+              return(
+                 <option value={category.id} key={category.id}>
                 {category.name}
               </option>
-            ))} */}
-          </Select>
-        </FormControl>
+              )
+               
+            })}
+              
+              </Select>
+
+          </FormControl>
 
         {/* Chakra UI's FormControl, FormLabel, and Input components are used for the question amount input */}
-        <FormControl>
+        <FormControl className="form-group">
           <FormLabel htmlFor="amount">Number of Questions</FormLabel>
           <Input
             type="number"
@@ -123,20 +136,36 @@ function App() {
             step="1"
             defaultValue={10}
             ref={amountEl}
+           
           />
         </FormControl>
 
-        {/* A Chakra UI Button component for triggering the form submission */}
+        <FormControl>
+          {/* A Chakra UI Button component for triggering the form submission */}
         <Button type="submit" className="btn">
           Generate
         </Button>
-      </form>
+        </FormControl>
 
-      {/* This renders your CardList component, passing the flashcards data as a prop. */}
+        <FormControl className="form-group">
+           {/* This renders your CardList component, passing the flashcards data as a prop. */}
       <Box className="container">
         <CardList flashcard={flashcard} />
       </Box>
+        </FormControl>
+      </form>
+
+     
     </Box>
+
+
+
+
+
+    </ChakraProvider>
+
+   
+        
   );
 }
 

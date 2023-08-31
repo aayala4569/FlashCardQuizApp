@@ -12,7 +12,7 @@ import {
   import { useEffect, useRef, useState } from 'react';
 
 //Interface dfines props expected by the Flashcard component.
-interface FlashcardProps {
+export interface FlashcardProps {
   flashcard: {
     question: string;
     answer: string;
@@ -27,6 +27,7 @@ export default function Flashcard({ flashcard }: FlashcardProps): JSX.Element {
 
 //using the useState hook to manage the state of FLIP and HEIGHT of the card
   const [flip, setFlip] = useState(false);
+  
   const [height, setHeight] = useState<number | string>('initial');
 
   //useRef hooks are used to referencethe front and back elements of the card
@@ -42,7 +43,7 @@ export default function Flashcard({ flashcard }: FlashcardProps): JSX.Element {
     }
   }
 
-//This useEffect hook runs setMaxHEight whenever the flashcard prop changes
+//This useEffect hook runs setMaxHeight whenever the flashcard prop changes
   useEffect(setMaxHeight, [flashcard.question, flashcard.answer, flashcard.options]);
 
 //This use effect adds an event listener for window resize 
@@ -54,16 +55,20 @@ export default function Flashcard({ flashcard }: FlashcardProps): JSX.Element {
 
 //Rendering the card
   return (
-    <Box className={`card ${flip ? 'flip' : ''}`}
+    <Box 
       h={height}
       style={{ height: height }}
       onClick={() => setFlip(!flip)}
+      bg="lightblue"
       borderWidth="1px"
+      boxShadow="0 0 5px 2px rgba(0,0,0,0.3)"
       borderRadius="lg"
-      overflow="hidden" >
-
-{/* Cards content(front/back) */}
-    <Box p={4} ref={frontEl}>
+      overflow="hidden" 
+      width="100%"
+      margin={50}
+      >
+        {!flip ? 
+       <Box p={4} ref={frontEl}>
         <Text fontSize="xl">{flashcard.question}</Text>
         <Box mt={2} className="flashcard-options"> 
 
@@ -79,10 +84,12 @@ export default function Flashcard({ flashcard }: FlashcardProps): JSX.Element {
             </Box>
         ))} 
            </Box>
-      </Box>
-      <Box p={4} ref={backEl}>
+      </Box> :<Box p={4} ref={backEl}>
         <Text fontSize="xl">{flashcard.answer}</Text>
-      </Box>
+      </Box>}
+
+
+      
     </Box>
   );
 }
