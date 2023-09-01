@@ -6,6 +6,10 @@ import React, {
   Input,
   Button,
   ChakraProvider,
+  CSSReset,
+  Flex,
+  Center,
+  Text,
 } from "@chakra-ui/react";
 import Flashcard from "./Componets/FlashCard";
 import "./App.css";
@@ -41,11 +45,10 @@ function App() {
     axios
       .get("https://opentdb.com/api_category.php")
       .then((res) => {
-        console.log("API response for categories:", res.data)
+        console.log("API response for categories:", res.data);
         setCategories(res.data.trivia_categories);
-
       })
-      .catch((error)=> {
+      .catch((error) => {
         console.error("error fetching categories:", error);
       });
   }, []);
@@ -59,8 +62,7 @@ function App() {
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     if (amountEl.current && categoryEl.current) {
-      const apiURL =
-        "https://opentdb.com/api.php?amount=10&type=multiple";
+      const apiURL = "https://opentdb.com/api.php?amount=10&type=multiple";
       console.log("Fetching data from", apiURL);
       axios
         .get(apiURL, {
@@ -104,68 +106,68 @@ function App() {
   //And Displaying the list of flashcards using the CardList component
   return (
     <ChakraProvider>
- <Box>
-      {/* A standard HTML form element with the onSubmit event handler set to the handleSubmit function. */}
-      <form className="header" onSubmit={handleSubmit}>
-        {/* Below components are used to create the category selection dropdown */}
-        <FormControl className="form-group" >
-          
-            <FormLabel htmlFor="category">Category</FormLabel>
-          <Select id="category" ref={categoryEl}>
-            {/* This maps over the categories array and generates an <option> element for each category. */}
-            {categories.map(category => {
-              return(
-                 <option value={category.id} key={category.id}>
-                {category.name}
-              </option>
-              )
-               
-            })}
-              
+      <CSSReset />
+
+      <Flex
+        bgGradient="linear(to-r, teal.500, blue.500)"
+        minHeight="100vh"
+        display="flex"
+        justifyContent="center"
+        flexDirection="column"
+        alignItems="center"
+      >
+        <Text fontSize="3xl" fontWeight="bold" mb={4}>
+          Let's Play Trivia!
+        </Text>
+        {/* A standard HTML form element with the onSubmit event handler set to the handleSubmit function. */}
+        <form className="header" onSubmit={handleSubmit}>
+          <Flex justifyContent="center" alignItems="center"></Flex>
+          <Center width="100%">
+            {/* Below components are used to create the category selection dropdown */}
+            <FormControl
+              className="form-group"
+              marginRight={"20px"}
+              width="60%"
+              maxWidth="300px"
+            >
+              <FormLabel htmlFor="category">Category</FormLabel>
+              <Select id="category" ref={categoryEl}>
+                {/* This maps over the categories array and generates an <option> element for each category. */}
+                {categories.map((category) => {
+                  return (
+                    <option value={category.id} key={category.id}>
+                      {category.name}
+                    </option>
+                  );
+                })}
+                {/* Chakra UI's, FormLabel, and Input components are used for the question amount input */}
               </Select>
+              <FormLabel htmlFor="amount">Number of Questions</FormLabel>
+              <Input
+                type="number"
+                id="amount"
+                min="1"
+                step="1"
+                defaultValue={0}
+                ref={amountEl}
+              />
+              <Button type="submit" className="btn">
+                Generate
+              </Button>
+            </FormControl>
+          </Center>
 
-          </FormControl>
-
-        {/* Chakra UI's FormControl, FormLabel, and Input components are used for the question amount input */}
-        <FormControl className="form-group">
-          <FormLabel htmlFor="amount">Number of Questions</FormLabel>
-          <Input
-            type="number"
-            id="amount"
-            min="1"
-            step="1"
-            defaultValue={10}
-            ref={amountEl}
-           
-          />
-        </FormControl>
-
-        <FormControl>
           {/* A Chakra UI Button component for triggering the form submission */}
-        <Button type="submit" className="btn">
-          Generate
-        </Button>
-        </FormControl>
 
-        <FormControl className="form-group">
-           {/* This renders your CardList component, passing the flashcards data as a prop. */}
-      <Box className="container">
-        <CardList flashcard={flashcard} />
-      </Box>
-        </FormControl>
-      </form>
-
-     
-    </Box>
-
-
-
-
-
+          <FormControl className="form-group">
+            {/* This renders your CardList component, passing the flashcards data as a prop. */}
+            <Box className="container">
+              <CardList flashcard={flashcard} />
+            </Box>
+          </FormControl>
+        </form>
+      </Flex>
     </ChakraProvider>
-
-   
-        
   );
 }
 

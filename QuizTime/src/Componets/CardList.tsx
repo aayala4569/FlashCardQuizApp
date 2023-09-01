@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import Flashcard from "./FlashCard";
+import "../App.css";
 
 //This interface defines the props expected by the Cardlist
 interface CardListProps {
@@ -18,7 +19,7 @@ export default function CardList({ flashcard }: CardListProps): JSX.Element {
     <Box
       className="card-grid"
       display="grid"
-      gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+      
       gap={4}
       padding={15}
       margin={16}
